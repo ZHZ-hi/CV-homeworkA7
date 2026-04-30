@@ -14,6 +14,7 @@ from torchvision.datasets import CIFAR10
 ROOT = Path(__file__).resolve().parents[1]
 SAMPLE_DIR = ROOT / "data" / "samples"
 CIFAR_DIR = ROOT / "data" / "cifar10"
+CIFAR_SUBSET_DIR = ROOT / "data" / "cifar_subset"
 _CIFAR_DOWNLOAD_FAILED = False
 CIFAR_CLASSES = [
     "飞机",
@@ -51,6 +52,10 @@ def ensure_sample_images() -> None:
 
 
 def load_sample_images(image_size: int = 64, limit: int = 32) -> list[SampleImage]:
+    subset_samples = load_packaged_cifar_subset(image_size=image_size, limit=limit)
+    if subset_samples:
+        return subset_samples
+
     try:
         cifar_samples = load_cifar10_images(image_size=image_size, limit=limit)
         if cifar_samples:
@@ -70,6 +75,15 @@ def load_sample_images(image_size: int = 64, limit: int = 32) -> list[SampleImag
     return samples
 
 
+def load_packaged_cifar_subset(image_size: int = 64, limit: int = 32) -> list[SampleImage]:
+    samples: list[SampleImage] = []
+    for path in sorted(CIFAR_SUBSET_DIR.glob("*.png"))[:limit]:
+        img = Image.open(path).convert("RGB").resize((image_size, image_size), Image.Resampling.BICUBIC)
+        label = path.stem.split("_", 1)[-1].replace("_", " ")
+        samples.append(SampleImage(f"CIFAR-10 子集：{label}", img))
+    return samples
+
+
 def load_cifar10_images(image_size: int = 64, limit: int = 8) -> list[SampleImage]:
     dataset = _load_cifar10_dataset()
     selected: list[SampleImage] = []
@@ -82,6 +96,8 @@ def load_cifar10_images(image_size: int = 64, limit: int = 8) -> list[SampleImag
 
 
 def dataset_source_label() -> str:
+    if list(CIFAR_SUBSET_DIR.glob("*.png")):
+        return "真实小数据集：CIFAR-10 子集（随仓库部署）"
     if _cifar_exists():
         return "真实小数据集：CIFAR-10"
     return "真实小数据集：scikit-learn digits（CIFAR-10 未缓存时自动使用）"

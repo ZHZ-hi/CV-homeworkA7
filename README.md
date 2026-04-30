@@ -5,7 +5,7 @@
 - 遮挡补全重建：随机遮挡输入图像，用轻量 AutoEncoder 重建原图。
 - SimCLR 简化对比学习：对同一图像生成两种增强视图，训练编码器拉近正样本表示。
 
-应用优先使用 CIFAR-10 真实小数据集。若运行环境无法下载或尚未缓存 CIFAR-10，会自动使用 scikit-learn 自带的 digits 真实小数据集，最后才退回内置合成样本。
+应用随仓库打包一个轻量 CIFAR-10 PNG 子集，部署后无需下载完整数据集也能展示真实 CIFAR 图像。若子集不存在，会尝试下载完整 CIFAR-10；若下载失败，则自动使用 scikit-learn 自带的 digits 真实小数据集。
 
 ## 本地运行
 
@@ -34,6 +34,7 @@ modules/
   train.py
   visualize.py
 data/samples/
+data/cifar_subset/
 requirements.txt
 DEPLOYMENT.md
 ```

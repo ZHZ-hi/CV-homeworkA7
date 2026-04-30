@@ -10,11 +10,11 @@ app.py
 ```
 
 5. Streamlit Cloud 会自动读取 `requirements.txt` 安装依赖。
-6. 部署完成后打开应用，默认会优先加载 CIFAR-10；如果网络不可用，会自动回退到 scikit-learn digits。
+6. 部署完成后打开应用，默认会加载仓库内置的 CIFAR-10 小子集；如果该子集不存在，会尝试下载完整 CIFAR-10，再失败才回退到 scikit-learn digits。
 
 ## 注意事项
 
-- 本应用优先使用 torchvision 自动下载 CIFAR-10。若云端网络暂时不可用，会自动使用 scikit-learn digits 真实小数据集，避免页面启动失败。
+- 本应用已打包 `data/cifar_subset/`，Streamlit Cloud 无需携带本地 `data/cifar10/` 完整缓存也能展示 CIFAR 图像。
 - PyTorch 在 Streamlit Cloud 上使用 CPU。若响应慢，优先降低训练样本数、训练轮数或每轮训练步数。
 - 推荐部署演示参数：图像尺寸 `64x64`，训练样本 `16-32`，epoch `10-50`，每轮步数 `2-4`。
-- CIFAR-10 首次下载约 160 MB，云端冷启动可能较慢；应用已提供 digits 回退路径。
+- `data/cifar10/` 是本地完整缓存，已在 `.gitignore` 中忽略；不要提交完整 CIFAR-10 压缩包和 batch 文件。
