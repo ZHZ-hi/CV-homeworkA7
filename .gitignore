@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+.streamlit/secrets.toml
+.venv/
+venv/
+data/samples/*.png
+data/cifar10/
+~$*
+~WRL*.tmp
+*.tmp
